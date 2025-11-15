@@ -39,6 +39,110 @@ Each part includes:
 ---
 
 
+
+Screenshots available in:  
+📁 `/screenshots/system/`
+
+## 2.2 Constraints
+We followed all mandatory constraints:
+- hostname format respected  
+- user naming format respected  
+- no root login allowed  
+- no password SSH authentication  
+- scripts used wherever possible  
+
+---
+
+# 3. Team Methodology
+
+| Task | Member |
+|------|--------|
+| Users, groups, sudoers | Vincent |
+| ACL, umask configuration | Vincent |
+| SSH Hardening | Jules |
+| UFW + Fail2Ban configuration | Ignacio |
+| LUKS + VeraCrypt | Jules |
+| Auditd monitoring | Ignacio |
+| Documentation (GitHub) | Shared |
+
+We used GitHub to coordinate work and share scripts.  
+All screenshots were taken individually and verified as a group.
+
+---
+
+# 4. References
+
+We used the following security references:
+
+- **CIS Benchmark Ubuntu 24.04 LTS**
+- **ANSSI RGS v2.0 – SSH recommendations**
+- Ubuntu Documentation:  
+  https://ubuntu.com/server/docs
+- manpages:  
+  `man sshd_config`, `man pam_faillock`, `man ufw`, `man auditd`
+
+These references guided our decisions regarding:
+- umask (027 recommended by CIS)  
+- SSH ciphers, KEX & MAC configuration  
+- sudoers restrictions  
+- firewall policies  
+
+---
+
+# 5. Scripting Approach
+
+Automation was used wherever relevant.  
+All scripts are located in:
+
+📁 `/scripts/`
+
+Scripts available:
+- `01_users.sh`  
+- `02_acls_umask.sh`  
+- `03_ssh_hardening.sh`  
+- `04_ufw_fail2ban.sh`  
+- `05_luks_setup.sh`  
+- `06_auditd_rules.sh`  
+
+Each script is **idempotent** and can be executed on any fresh Ubuntu VM.
+
+---
+
+# 6. Technical Exercises
+
+---
+
+# 6.1 Users & Privileges
+
+## ✔️ Objective
+- Create admin, dev, intern accounts  
+- Configure granular sudo access  
+- Lock account after 3 failed sudo attempts (5 min lock)
+
+---
+
+## 👤 Users & Groups Creation
+
+### Script: `/scripts/01_users.sh`
+```bash
+#!/bin/bash
+
+# Groups
+groupadd admin_role
+groupadd dev_role
+groupadd intern_role
+
+# Users
+useradd -m -s /bin/bash vincent.bare
+useradd -m -s /bin/bash jules.fedit
+useradd -m -s /bin/bash ignacio.botella
+
+# Group assignments
+usermod -aG admin_role vincent.bare
+usermod -aG dev_role jules.fedit
+usermod -aG intern_role ignacio.botella
+
+
 # 2. Environment & Requirements
 
 ## 2.1 VM & OS
