@@ -36,7 +36,24 @@ touch /etc/sudoers.d/intern
 echo "%administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admin
 echo "%developers ALL=(ALL) NOPASSWD: /bin/mount, /bin/systemctl restart ssh" >> /etc/sudoers.d/dev
 
+chmod 440 /etc/sudoers.d/*
+
+visudo -c 
 
 
+# Configure accocunt lockout
 
+# First modify /etc/security/failback.conf
 
+echo "deny = 3" >> /etc/security/faillock.conf
+echo "unlock_time = 300" >> /etc/security/faillock.conf
+
+# A backup is crated in case of failure
+
+sudo cp /etc/pam.d/common-auth /etc/pam.d/common-auth.backup
+
+printf "Add this configuration to pam.d/common-auth
+auth    requisite                       pam_faillock.so preauth silent
+auth    [success=4 default=ignore]      pam_unix.so nullok
+auth    [default=die]                   pam_faillock.so authfail   
+auth    sufficient                      pam_faillock.so authsucc"
