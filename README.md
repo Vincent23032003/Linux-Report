@@ -304,8 +304,6 @@ setfacl -d -m g:intern_role:r  /opt/projects
 ## Verification
 
 ```bash
-```
-```bash
 ls -ld /opt/projects
 getfacl /opt/projects
 ```
@@ -402,4 +400,175 @@ Configured inheritance
 Adjusted umask to CIS standard
 
 Verified behavior for all users
+
+
+
+# 6.3 SSH Hardening & Authentication Security
+
+## ✔️ Objectives
+- Install and activate SSH
+- Disable password authentication (keys only)
+- Disable root login
+- Move SSH to a non-standard port
+- Allow only our 3 users
+- Add legal banner message
+- Harden cryptographic algorithms (Ciphers, MACs, KEX)
+- Test connectivity and rejection
+
+We follow:
+- **CIS Benchmark 5.2.x**
+- **ANSSI RGS** SSH recommendations
+
+---
+
+# 🛠️ SSH Installation & Activation
+
+```bash
+sudo apt install -y openssh-server
+sudo systemctl enable ssh
+sudo systemctl start ssh
+sudo systemctl status ssh
+
+
+## SSH Key Generation (Client Side)
+
+Example for user vincent.bare:
+
+```bash
+ssh-keygen -t ed25519 -C "vincent"
+ssh-copy-id -p 2222 vincent.bare@<server-ip>
+```
+This creates:
+
+- private key → ~/.ssh/id_ed25519
+- public key → ~/.ssh/id_ed25519.pub
+
+
+Then we manually checked:
+
+```bash
+cat ~/.ssh/authorized_keys
+```
+
+## SSH Server Configuration (Hardening)
+
+Main file:
+```
+/etc/ssh/sshd_config
+```
+
+We modified the following settings:
+
+# Port changed (security by reducing automated scans)
+Port 2222
+
+# Disable root login
+PermitRootLogin no
+
+# Disable password authentication
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+
+# Key-based authentication only
+PubkeyAuthentication yes
+
+# Allow only our 3 users
+AllowUsers vincent.bare jules.fedit ignacio.botella
+
+# Banner message
+Banner /etc/issue.net
+
+# Hardened Ciphers (ANSSI + CIS)
+Ciphers aes256-gcm@openssh.com,chacha20-poly1305@openssh.com
+
+# Hardened MAC algorithms
+MACs hmac-sha2-512,hmac-sha2-256
+
+# Strong key exchange algorithms
+KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org
+
+
+Why these choices?
+
+- Port change → reduces automated scans
+- PermitRootLogin no → CIS + ANSSI requirement
+- PasswordAuthentication no → prevents brute force
+- Hardened Ciphers/MAC/KEX → only modern crypto allowed
+- AllowUsers → restricts attack surface
+
+Apply changes:
+
+```
+sudo systemctl restart ssh
+```
+
+## Connectivity Tests
+
+### 1. Test with SSH key (should work)
+
+```
+ssh -p 2222 vincent.bare@<server-ip>
+```
+
+Result:
+
+- Banner appears
+- Login accepted
+- No password asked
+
+### 2. Test without SSH key (must fail)
+
+```
+ssh -p 2222 ignacio.botella@<server-ip>
+```
+Result:
+
+Permission denied (publickey).
+
+
+
+
+### 3. Test with wrong user (blocked by AllowUsers)
+
+
+```
+ssh -p 2222 root@<server-ip>
+```
+
+Result:
+
+Permission denied.
+
+## Cryptographic Audit
+
+We verified the active algorithms with:
+
+- ssh -Q cipher
+- ssh -Q mac
+- ssh -Q kex
+
+We confirmed only the hardened ciphers/MACs/KEX are enabled.
+
+screen proov
+
+
+## Summary
+
+| Requirement          | Status |
+| -------------------- | ------ |
+| Key-based login only | ✔️     |
+| No password login    | ✔️     |
+| Root SSH disabled    | ✔️     |
+| Custom port (2222)   | ✔️     |
+| Banner configured    | ✔️     |
+| Restricted users     | ✔️     |
+| Strong cryptography  | ✔️     |
+| Tests performed      | ✔️     |
+
+
+
+
+
+
+
 
