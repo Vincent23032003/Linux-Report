@@ -198,10 +198,18 @@ This enforces:
 
 ## Test Results
 
-### Test 1 — Admin user (vincent.bare)
+### Test 1 — Admin user (Vincent_bare)
+
+![adminRight](images/adminRight.png)
+
 ### Test 2 — Dev user (jules.fedit)
+
+![dev1Rights](images/dev1Rights.png)
+![dev2Rights](images/dev2Rights.png)
+
 ### Test 3 — Intern user (ignacio.botella)
 
+![internRights](images/internRights.png)
 
 ## Summary
 
@@ -282,6 +290,8 @@ setfacl -d -m g:intern_role:r  /opt/projects
 ls -ld /opt/projects
 getfacl /opt/projects
 ```
+![ls-ld](images/ls-ld.png)
+
 We see :
 
 # file: projects
@@ -295,6 +305,8 @@ group:intern_role:r-x
 mask::rwx
 other::---
 ```
+![acl check](images/aclCheck.png)
+
 
 ## UMASK Configuration (CIS Benchmark)
 
@@ -325,6 +337,8 @@ umask
 
 Output:
 
+![umask027](images/umask027.png)
+
 screen umask 0027
 
 
@@ -336,17 +350,26 @@ We switched to each user to test expected behavior.
 
 ### 1. Admin (vincent.bare – admin_role)
 
-preuve de screen
+Then create a file and write into it. 
+![admin Acl Access](images/adminAclAccess.png)
+
+Finally, we try to read the content of the file.
+![admin Acl Access](images/adminAclAccess2.png)
 
 ### 2. Developer (jules.fedit – dev_role)
 
-preuve de screen
+We connect to the dev_role account which is Jules_fedit.
+![dev Acl Access](images/devAclAccess.png)
+
+We can’t acces to /opt/projects which is normal because we don”t have the execution permission.
+Nevertheless, we can write and read a file.
+![dev Acl Access](images/devAclAccess.png)
+
 
 
 ### 3. Intern (ignacio.botella – intern_role)
 
-
-preuve de screen
+![intern Acl Access](images/internAclAccess.png)
 
 
 
