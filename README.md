@@ -152,11 +152,31 @@ useradd -m -s /bin/bash ignacio.botella
 usermod -aG admin_role vincent.bare
 usermod -aG dev_role jules.fedit
 usermod -aG intern_role ignacio.botella
+```
+
+## Verification
+
+### Users exist
+```bash
+cat /etc/passwd | grep -E "vincent|jules|ignacio"
+```
+
+### Groups exist
+```bash
+cat /etc/group | grep -E "admin_role|dev_role|intern_role"
+```
+
+### Each user assigned properly
+
+id vincent.bare
+id jules.fedit
+id ignacio.botella
 
 
 
 
 
+### 
 Sudoers Configuration
 
 Admin (full rights)
