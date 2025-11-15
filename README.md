@@ -154,6 +154,8 @@ usermod -aG dev_role jules.fedit
 usermod -aG intern_role ignacio.botella
 ```
 
+
+
 ## Verification
 
 ### Users exist
@@ -167,27 +169,54 @@ cat /etc/group | grep -E "admin_role|dev_role|intern_role"
 ```
 
 ### Each user assigned properly
-
+```bash
 id vincent.bare
 id jules.fedit
 id ignacio.botella
+```
 
 
 
+## Sudoers Configuration
 
+We edited /etc/sudoers.d/roles (recommended practice):
 
-### 
-Sudoers Configuration
+```bash
+sudo visudo -f /etc/sudoers.d/roles
+```
 
-Admin (full rights)
+### Admin (full rights)
+```bash
 %admin_role ALL=(ALL:ALL) ALL
+```
 
-Dev (ONLY 2 commands allowed)
+### Dev (ONLY 2 commands allowed)
+```bash
 %dev_role ALL=(ALL) /usr/bin/mount, /usr/bin/systemctl restart ssh
+```
 
 Intern (no sudo)
 
+We ensured correct permissions (mandatory):
+```bash
+sudo chmod 440 /etc/sudoers.d/roles
+```
 
-Account Lockout (PAM)
+## Account Lockout Policy (PAM)
 
-We used CIS-recommended faillock module:
+We used the CIS-recommended faillock module.
+File: /etc/pam.d/common-auth
+
+```bash
+auth required pam_faillock.so preauth silent deny=3 unlock_time=300
+auth [default=die] pam_faillock.so authfail deny=3 unlock_time=300
+```
+
+This enforces:
+| Condition              | Result         |
+| ---------------------- | -------------- |
+| 3 failed sudo attempts | account LOCKED |
+| Duration               | 5 minutes      |
+| Mechanism              | pam_faillock   |
+
+
