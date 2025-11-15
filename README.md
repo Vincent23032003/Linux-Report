@@ -164,43 +164,18 @@ usermod -aG intern_role ignacio.botella
 
 
 ### Groups exist
-```bash
-cat /etc/group | grep -E "admin_role|dev_role|intern_role"
-```
+
+![Group Creation](images/groupCreation.png)
+
 
 ### Each user assigned properly
-```bash
-id vincent.bare
-id jules.fedit
-id ignacio.botella
-```
-
+![id](images/id.png)
 
 
 ## Sudoers Configuration
 
-We edited /etc/sudoers.d/roles (recommended practice):
+![sudoersRights](images/sudoersRigths.png)
 
-```bash
-sudo visudo -f /etc/sudoers.d/roles
-```
-
-### Admin (full rights)
-```bash
-%admin_role ALL=(ALL:ALL) ALL
-```
-
-### Dev (ONLY 2 commands allowed)
-```bash
-%dev_role ALL=(ALL) /usr/bin/mount, /usr/bin/systemctl restart ssh
-```
-
-Intern (no sudo)
-
-We ensured correct permissions (mandatory):
-```bash
-sudo chmod 440 /etc/sudoers.d/roles
-```
 
 ## Account Lockout Policy (PAM)
 
