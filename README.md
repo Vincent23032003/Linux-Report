@@ -48,7 +48,7 @@ System verification command executed:
 sudo apt update; echo -e "\n\n\nHost: $(hostname)"; echo -e "Kernel: $(uname -r)\n"; echo "OS info:"; cat /etc/os-release; echo -e "\nDate: $(date)"; echo "apt: $(apt list -upgradable 2>/dev/null | grep -c upgradable)" 
 ``````
 
-![Image 2](images/2.png)
+![hostnameConfig](images/hostnameConfig.png)
 
 
 Screenshots available in:  
@@ -105,7 +105,7 @@ These references guided our decisions regarding:
 Automation was used wherever relevant.  
 All scripts are located in:
 
-📁 `/scripts/`
+`/scripts/`
 
 Scripts available:
 - `01_users.sh`  
@@ -125,14 +125,14 @@ Each script is **idempotent** and can be executed on any fresh Ubuntu VM.
 
 # 6.1 Users & Privileges
 
-## ✔️ Objective
+## Objective
 - Create admin, dev, intern accounts  
 - Configure granular sudo access  
 - Lock account after 3 failed sudo attempts (5 min lock)
 
 ---
 
-## 👤 Users & Groups Creation
+## Users & Groups Creation
 
 ### Script: `/scripts/01_users.sh`
 ```bash
