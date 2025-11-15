@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -s
+set -euo pipefail
 
 # Create users with home directory and bash shell
 useradd -m -s /bin/bash Vicent_bare
@@ -27,7 +27,16 @@ cat /etc/passwd | grep -E "Vicent_bare|Jules_fedit|Ignacio_botella"
 
 cat /etc/group  | grep -E "admin|dev|intern" 
 
-# Lockout after 3 attempts
+# Role configurations:
 
-echo "auth required pam_tally2.so deny=3 unlock_time=60" >> /etc/pam.d/sudo
-echo "account required pam_tally2.so" >> /etc/pam.d/sudo
+touch /etc/sudoers.d/admin
+touch /etc/sudoers.d/dev
+touch /etc/sudoers.d/intern
+
+echo "%administrators ALL=(ALL:ALL) ALL" >> /etc/sudoers.d/admin
+echo "%developers ALL=(ALL) NOPASSWD: /bin/mount, /bin/systemctl restart ssh" >> /etc/sudoers.d/dev
+
+
+
+
+
