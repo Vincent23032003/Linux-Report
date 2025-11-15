@@ -2,7 +2,6 @@
 ### **Team: Vincent Baré – Jules Fedit – Ignacio Botella**  
 ### **Group: Gr03 – TP03**
 
-
 ---
 
 # Table of Contents
@@ -22,8 +21,6 @@
   - [6.6 Audit System](#66-audit-system)
 - [7. Conclusion](#7-conclusion)
 
-
-
 ---
 
 # 1. Context
@@ -37,6 +34,18 @@ Each part includes:
 - Proof (screenshots directory on GitHub)  
 
 ---
+
+# 2. Environment & Requirements
+
+## 2.1 VM & OS
+Hostname required format: ECEPa_I5_Gr03_GRTP03
+
+
+System verification command executed:
+``````bash
+sudo apt update; echo -e "\n\n\nHost: $(hostname)"; echo -e "Kernel: $(uname -r)\n"; echo "OS info:"; cat /etc/os-release; echo -e "\nDate: $(date)"; echo "apt: $(apt list -upgradable 2>/dev/null | grep -c upgradable)" 
+``````
+
 
 
 
@@ -143,10 +152,20 @@ usermod -aG dev_role jules.fedit
 usermod -aG intern_role ignacio.botella
 
 
-# 2. Environment & Requirements
-
-## 2.1 VM & OS
-Hostname required format: ECEPa_I5_Gr03_GRTP03
 
 
-System verification command executed:
+
+Sudoers Configuration
+
+Admin (full rights)
+%admin_role ALL=(ALL:ALL) ALL
+
+Dev (ONLY 2 commands allowed)
+%dev_role ALL=(ALL) /usr/bin/mount, /usr/bin/systemctl restart ssh
+
+Intern (no sudo)
+
+
+Account Lockout (PAM)
+
+We used CIS-recommended faillock module:
