@@ -156,12 +156,12 @@ usermod -aG intern_role ignacio.botella
 
 
 
+
 ## Verification
 
 ### Users exist
-```bash
-cat /etc/passwd | grep -E "vincent|jules|ignacio"
-```
+![UsersCreation](images/usersCreation.png)
+
 
 ### Groups exist
 ```bash
