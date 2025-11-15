@@ -567,7 +567,160 @@ screen proov
 
 
 
+# 6.4 Firewall & Intrusion Protection
 
+## ✔️ Objectives
+- Install and configure UFW
+- Deny all inbound & outbound traffic by default
+- Allow only essential ports and justify each one
+- Enable UFW logging
+- Install and configure Fail2Ban
+- Ban after 3 failed SSH login attempts
+- Ban duration: 10 minutes
+- Provide proof of bans and unbans
+
+This configuration aligns with:
+- CIS Ubuntu Benchmark (Section 3.5)
+- Principle of Least Privilege
+- ANSSI firewall best practices
+
+---
+
+# 🛡️ 1. UFW Configuration
+
+## 🔧 Installation
+
+```bash
+sudo apt install -y ufw
+```
+
+
+## Default deny (CIS requirement)
+
+
+```bash
+sudo ufw default deny incoming
+sudo ufw default deny outgoing
+```
+This ensures that no communication is allowed unless explicitly authorized.
+
+
+
+
+## Allowed Ports (with justification)
+
+We only opened the strictly necessary ports based on our needs.
+
+| Port | Service           | Direction | Justification                                            |
+| ---- | ----------------- | --------- | -------------------------------------------------------- |
+| 2222 | SSH (custom port) | In/Out    | Needed for remote admin access (secure port)             |
+| 53   | DNS               | Out       | Required for domain resolution (APT updates)             |
+| 443  | HTTPS             | Out       | Required for downloading signing keys & security updates |
+
+
+Commands used:
+
+```bash
+sudo ufw allow out 53
+sudo ufw allow out 443
+sudo ufw allow 2222/tcp
+```
+
+
+No other port is allowed
+Conforms to “least privilege” principle
+
+
+
+## Enable Logging
+
+```bash
+sudo ufw logging on
+```
+
+Logs can be viewed using:
+
+
+```bash
+sudo tail -f /var/log/ufw.log
+```
+
+## Activate UFW
+
+```bash
+sudo ufw enable
+sudo ufw status verbose
+```
+
+
+## 2. Fail2Ban Configuration
+
+## Installation
+
+```bash
+sudo apt install -y fail2ban
+```
+
+We created a persistent configuration file:
+```bash
+/etc/fail2ban/jail.local
+```
+
+```bash
+[sshd]
+enabled = true
+port = 2222
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 600
+findtime = 600
+```
+
+
+This means:
+
+- 3 failed login attempts → BAN
+- Ban lasts 10 minutes (600 seconds)
+
+
+## Start Fail2Ban
+
+```bash
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+sudo fail2ban-client status sshd
+```
+## Fail2Ban Ban Test
+
+We intentionally used a wrong password from an unauthorized SSH attempt:
+
+```bash
+ssh -p 2222 wronguser@<server-ip>
+```
+
+After 3 attempts, the IP is banned:
+
+
+```bash
+sudo fail2ban-client status sshd
+```
+
+
+
+## Summary
+
+| Component                                       | Status |
+| ----------------------------------------------- | ------ |
+| UFW installed & active                          | ✔️     |
+| Deny all inbound/outbound                       | ✔️     |
+| Only essential ports allowed with justification | ✔️     |
+| Logging enabled                                 | ✔️     |
+| Fail2Ban installed                              | ✔️     |
+| SSH jail active                                 | ✔️     |
+| Ban after 3 attempts                            | ✔️     |
+| 10 min ban duration                             | ✔️     |
+| Proof of ban/unban captured                     | ✔️     |
 
 
 
