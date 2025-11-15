@@ -2,6 +2,8 @@
 ### **Team: Vincent Baré – Jules Fedit – Ignacio Botella**  
 ### **Group: Gr03 – TP03**
 
+
+![Image 1](images/1.png)
 ---
 
 # Table of Contents
@@ -46,7 +48,7 @@ System verification command executed:
 sudo apt update; echo -e "\n\n\nHost: $(hostname)"; echo -e "Kernel: $(uname -r)\n"; echo "OS info:"; cat /etc/os-release; echo -e "\nDate: $(date)"; echo "apt: $(apt list -upgradable 2>/dev/null | grep -c upgradable)" 
 ``````
 
-
+![Image 2](images/2.png)
 
 
 Screenshots available in:  
