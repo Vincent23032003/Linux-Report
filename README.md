@@ -220,3 +220,186 @@ This enforces:
 | Mechanism              | pam_faillock   |
 
 
+
+## Test Results
+
+### Test 1 — Admin user (vincent.bare)
+### Test 2 — Dev user (jules.fedit)
+### Test 3 — Intern user (ignacio.botella)
+
+
+## Summary
+
+| User            | Group       | Sudo Rights         | Lockout Policy |
+| --------------- | ----------- | ------------------- | -------------- |
+| vincent.bare    | admin_role  | Full sudo           | Yes            |
+| jules.fedit     | dev_role    | mount + restart ssh | Yes            |
+| ignacio.botella | intern_role | No sudo             | Yes            |
+
+
+
+
+
+# 6.2 Fine-Grained Access
+
+## ✔️ Objectives
+- Create directory `/opt/projects`
+- Apply access control:
+  - admin → **rwx**
+  - dev → **rw**
+  - intern → **r**
+- Use **ACL** (more flexible than UNIX permissions)
+- Apply **CIS-recommended umask (027)** system-wide
+- Test each user's access
+
+---
+
+# 📁 Directory Creation & ACL Setup
+
+We used ACLs instead of simple UNIX permissions because:
+- multiple groups need different rights
+- ACLs allow per-group and per-user fine-grained control
+- they support inheritance for new files
+
+Install ACL support:
+
+```bash
+sudo apt install -y acl
+```
+
+Create folder:
+
+```bash
+sudo mkdir -p /opt/projects
+```
+
+
+## 🔐 ACL Configuration
+
+
+### Script: `/scripts/01_users.sh`
+```bash
+#!/bin/bash
+
+# Create directory
+mkdir -p /opt/projects
+
+# Full rights for admin group
+setfacl -m g:admin_role:rwx /opt/projects
+
+# Dev: read + write
+setfacl -m g:dev_role:rw /opt/projects
+
+# Intern: read-only
+# Needs +x on directory to traverse (required to read files)
+setfacl -m g:intern_role:r-- /opt/projects
+setfacl -m g:intern_role:rx /opt/projects
+
+# Inheritance for newly created files
+setfacl -d -m g:admin_role:rwx /opt/projects
+setfacl -d -m g:dev_role:rw  /opt/projects
+setfacl -d -m g:intern_role:r  /opt/projects
+```
+
+## Verification
+
+```bash
+```
+```bash
+ls -ld /opt/projects
+getfacl /opt/projects
+```
+We see :
+
+# file: projects
+
+```bash
+user::rwx
+group::rwx
+group:admin_role:rwx
+group:dev_role:rw-
+group:intern_role:r-x
+mask::rwx
+other::---
+```
+
+## UMASK Configuration (CIS Benchmark)
+
+Why change umask?
+
+The default Ubuntu umask is 002, which allows group write access.
+CIS Benchmark recommends 027 to enforce restrictive defaults:
+
+- owner: rwx
+- group: r-x
+- others: ---
+
+This prevents accidental exposure of files.
+
+Applied in:
+
+/etc/login.defs:
+
+/etc/profile:
+
+
+## Verification
+
+We ran 
+```bash
+umask
+```
+
+Output:
+
+screen umask 0027
+
+
+
+
+## Access Tests
+
+We switched to each user to test expected behavior.
+
+### 1. Admin (vincent.bare – admin_role)
+
+preuve de screen
+
+### 2. Developer (jules.fedit – dev_role)
+
+preuve de screen
+
+
+### 3. Intern (ignacio.botella – intern_role)
+
+
+preuve de screen
+
+
+
+## Summary
+
+| Role   | Expected | Actual           | OK                           |
+| ------ | -------- | ---------------- | ---------------------------- |
+| admin  | rwx      | rwx              | ✔️                           |
+| dev    | rw       | rw on files only | ✔️                           |
+| intern | r        | r only           | ✔️ (x added for read access) |
+
+ACLs also inherit correctly for newly created files.
+
+
+
+## Conclusion
+
+ACLs provide the required fine-grained control that classic UNIX permissions cannot offer.
+
+We:
+
+Applied correct ACLs per group
+
+Configured inheritance
+
+Adjusted umask to CIS standard
+
+Verified behavior for all users
+
