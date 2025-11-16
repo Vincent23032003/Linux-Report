@@ -54,6 +54,7 @@ cat ~/.ssh/ignacio_id25519.pub >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 chmod 700 ~/.ssh
 
+cat /root/.ssh/authorized_keys
 #Harden Cyphers and cryptographics algorithms 
 
 echo "Ciphers aes256-ctr,aes192-ctr,aes128-ctr" >> /etc/ssh/ssh_config
