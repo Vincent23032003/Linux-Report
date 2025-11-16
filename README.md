@@ -215,9 +215,9 @@ This enforces:
 
 | User            | Group       | Sudo Rights         | Lockout Policy |
 | --------------- | ----------- | ------------------- | -------------- |
-| vincent.bare    | admin_role  | Full sudo           | Yes            |
-| jules.fedit     | dev_role    | mount + restart ssh | Yes            |
-| ignacio.botella | intern_role | No sudo             | Yes            |
+| Vincent_bare    | admin       | Full sudo           | Yes            |
+| Jules_fedit     | dev         | mount + restart ssh | Yes            |
+| Ignacio_botella | intern      | No sudo             | Yes            |
 
 
 
@@ -723,3 +723,31 @@ sudo fail2ban-client status sshd
 
 
 
+# 6.5 Data Encryption & Protection
+
+## 🎯 Objectives
+- Create a 10–20 MB encrypted partition using **LUKS**
+- Use `cryptsetup` to format & unlock the encrypted device
+- Mount it at `/mnt/secure`
+- Restrict access so only **admins** can see the content
+- Demonstrate:
+  - Mounted → data accessible  
+  - Unmounted → data unreadable  
+- Install and use **VeraCrypt**
+- Create a **hidden volume** and store sensitive data in it
+
+This follows:
+- CIS Ubuntu Benchmark (Disk Encryption)
+- ANSSI recommendations on data-at-rest protection
+
+---
+
+# 1. LUKS Encrypted Volume
+
+## 1.1 Create a 20MB test partition
+
+We simulate a storage device using a loopback file:
+
+```bash
+sudo dd if=/dev/zero of=/secure.img bs=1M count=20
+sudo losetup /dev/loop10 secure.img
