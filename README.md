@@ -139,19 +139,19 @@ Each script is **idempotent** and can be executed on any fresh Ubuntu VM.
 #!/bin/bash
 
 # Groups
-groupadd admin_role
-groupadd dev_role
-groupadd intern_role
+groupadd admin
+groupadd dev
+groupadd intern
 
 # Users
-useradd -m -s /bin/bash vincent.bare
-useradd -m -s /bin/bash jules.fedit
-useradd -m -s /bin/bash ignacio.botella
+useradd -m -s /bin/bash Vincent_bare
+useradd -m -s /bin/bash Jules_fedit
+useradd -m -s /bin/bash Ignacio_botella
 
 # Group assignments
-usermod -aG admin_role vincent.bare
-usermod -aG dev_role jules.fedit
-usermod -aG intern_role ignacio.botella
+usermod -aG admin_role Vincent_bare
+usermod -aG dev_role Jules_fedit
+usermod -aG intern_role Ignacio_botella
 ```
 
 
