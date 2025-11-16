@@ -36,6 +36,22 @@ echo "
 
 echo "Banner /etc/ssh/ssh_config.d/custom_banner" >> /etc/ssh/ssh_config
 
+#Create keys for the users and authorize them
+
+ssh-keygen -t ed25519 -f ~/.ssh/vincent_id25519 -C "Vincent_bare@ece" -N ""
+ssh-keygen -t ed25519 -f ~/.ssh/jules_id25519 -C "Jules_fedit@ece" -N ""
+ssh-keygen -t ed25519 -f ~/.ssh/ignacio_id25519 -C "Ignacio_botella@ece" -N ""
+
+ssh-copy-id -i ~/.ssh/vincent_id25519 
+
+
+cat ~/.ssh/vincent_id25519.pub >> ~/.ssh/authorized_keys
+cat ~/.ssh/jules_id25519.pub >> ~/.ssh/authorized_keys
+cat ~/.ssh/ignacio_id25519.pub >> ~/.ssh/authorized_keys
+
+chmod 600 ~/root/.ssh/authorized_keys
+chmod 700 ~/root/.ssh
+
 #Harden Cyphers and cryptographics algorithms 
 
 echo "Ciphers aes256-ctr,aes192-ctr,aes128-ctr" >> /etc/ssh/ssh_config
