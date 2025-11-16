@@ -221,7 +221,7 @@ This enforces:
 
 
 
-
+---
 
 # 6.2 Fine-Grained Access
 
@@ -399,7 +399,7 @@ Adjusted umask to CIS standard
 
 Verified behavior for all users
 
-
+---
 
 # 6.3 SSH Hardening & Authentication Security
 
@@ -564,6 +564,7 @@ screen proov
 | Tests performed      | ✔️     |
 
 
+---
 
 # 6.4 Firewall & Intrusion Protection
 
@@ -721,11 +722,11 @@ sudo fail2ban-client status sshd
 | Proof of ban/unban captured                     | ✔️     |
 
 
-
+---
 
 # 6.5 Data Encryption & Protection
 
-## 🎯 Objectives
+## Objectives
 - Create a 10–20 MB encrypted partition using **LUKS**
 - Use `cryptsetup` to format & unlock the encrypted device
 - Mount it at `/mnt/secure`
@@ -898,3 +899,132 @@ Place real sensitive data here.
 | Hidden volume created      | ✔️     |
 | Sensitive data stored      | ✔️     |
 
+
+---
+
+# 6.6 Audit System
+
+## Objectives
+- Install and enable **auditd**
+- Create persistent audit rules
+- Track modifications or access attempts on:
+  - `/etc/passwd`
+  - `/etc/shadow`
+  - `/root/*`
+  - privileged commands: `sudo`, `passwd`, `mount`
+- Generate logs for suspicious actions
+- Provide proof using `ausearch` and `aureport`
+
+This follows:
+- CIS Benchmark (Section 4.1)
+- ANSSI recommendations for critical file auditing
+
+---
+
+# 1. Installation & Activation
+
+```bash
+sudo apt install -y auditd audispd-plugins
+sudo systemctl enable auditd
+sudo systemctl start auditd
+sudo systemctl status auditd
+```
+
+# 2. Audit Rules (Persistent)
+
+We created the persistent rules file:
+
+```bash
+sudo nano /etc/audit/rules.d/hardening.rules
+```
+
+Contents:
+
+```bash
+# Monitor passwd file changes
+-w /etc/passwd -p rwa -k passwd_changes
+
+# Monitor shadow file changes
+-w /etc/shadow -p rwa -k shadow_changes
+
+# Monitor root directory
+-w /root/ -p rwa -k root_dir_monitoring
+
+# Monitor privileged binaries
+-w /usr/bin/sudo -p x -k privileged_sudo
+-w /usr/bin/passwd -p x -k privileged_passwd
+-w /usr/bin/mount -p x -k privileged_mount
+```
+
+Explanation of permission flags:
+
+- r → read
+- w → write
+- a → attribute changes
+- x → execution
+
+
+# 3. Apply and Load the Rules
+
+```bash
+sudo auditctl -R /etc/audit/rules.d/hardening.rules
+sudo auditctl -l
+```
+
+# 4. Trigger Events (Proof)
+
+We performed multiple actions to generate audit logs.
+
+## 4.1 Modify /etc/passwd (simulated)
+
+```bash
+sudo passwd testuser
+```
+
+## 4.2 Attempt to read /etc/shadow
+
+```bash
+sudo cat /etc/shadow
+```
+
+## 4.3 Execute privileged commands
+
+```bash
+sudo ls
+```
+
+passwd :
+
+
+```bash
+sudo passwd Vincent_bare
+```
+
+# 5. Summary Reports
+
+We used aureport to generate summary tables:
+
+```bash
+sudo aureport -k
+sudo aureport -x
+sudo aureport -f
+```
+
+These outputs confirm that:
+- executions are logged
+- modifications are recorded
+- forbidden accesses appear in the log
+
+# Summary
+
+| Feature                            | Status |
+| ---------------------------------- | ------ |
+| auditd installed                   | ✔️     |
+| audit rules persistent             | ✔️     |
+| passwd & shadow monitored          | ✔️     |
+| privileged commands monitored      | ✔️     |
+| root directory monitored           | ✔️     |
+| events successfully triggered      | ✔️     |
+| ausearch + aureport logs collected | ✔️     |
+
+Our audit subsystem now ensures full traceability of sensitive file modifications and privileged actions, complying with CIS and ANSSI monitoring guidelines.
