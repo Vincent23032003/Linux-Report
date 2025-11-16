@@ -751,3 +751,150 @@ We simulate a storage device using a loopback file:
 ```bash
 sudo dd if=/dev/zero of=/secure.img bs=1M count=20
 sudo losetup /dev/loop10 secure.img
+```
+
+Check:
+
+```bash
+losetup -a
+```
+
+## 1.2 Encrypt the volume with LUKS
+
+```bash
+sudo cryptsetup luksFormat /dev/loop10
+```
+Confirm with YES and set a passphrase.
+
+
+## 1.3 Open (unlock) the encrypted container
+
+
+```bash
+sudo cryptsetup open /dev/loop10 secure_volume
+```
+
+```bash
+/dev/mapper/secure_volume
+```
+
+## 1.4 Create a filesystem
+
+```bash
+sudo mkfs.ext4 /dev/mapper/secure_volume
+```
+
+## 1.5 Mount the encrypted volume
+
+```bash
+sudo mkdir -p /mnt/secure
+sudo mount /dev/mapper/secure_volume /mnt/secure
+```
+
+# 2. Permissions & Access Control
+
+```bash
+sudo chown root:admin_role /mnt/secure
+sudo chmod 770 /mnt/secure
+```
+Meaning:
+
+- Only root + admin_role have access
+- Dev and intern cannot read/write
+
+# 3. Demonstration of Encryption
+
+```bash
+sudo touch /mnt/secure/secret.txt
+sudo echo "TOP SECRET" > /mnt/secure/secret.txt
+cat /mnt/secure/secret.txt
+```
+Result: file is readable.
+
+## 3.1 Mounted → data accessible
+
+```bash
+sudo touch /mnt/secure/secret.txt
+sudo echo "TOP SECRET" > /mnt/secure/secret.txt
+cat /mnt/secure/secret.txt
+```
+
+## 3.2 Unmount and lock the volume
+
+```bash
+sudo umount /mnt/secure
+sudo cryptsetup close secure_volume
+```
+
+Trying to access the file:
+
+
+```bash
+sudo cat /mnt/secure/secret.txt
+```
+
+Result:
+
+No such file or directory
+
+Proof that encryption works.
+Without unlocking (cryptsetup open), the data is unreadable.
+
+
+# 4. VeraCrypt (Graphical + CLI)
+
+We installed VeraCrypt:
+
+```bash
+sudo apt install -y veracrypt
+```
+
+
+## 4.1 Create a VeraCrypt encrypted container
+
+Using the GUI or CLI:
+
+```bash
+veracrypt --text --create veracrypt_volume.hc
+```
+Steps
+
+- Choose standard volume
+- AES encryption
+- 10–20MB size
+- Set outer volume password
+
+## 4.2 Create a hidden volume inside it
+
+This protects against coercion:
+The outer volume opens normally.
+The hidden one is invisible unless the correct password is provided.
+
+## 4.3 Mount Outer Volume
+
+```bash
+veracrypt veracrypt_volume.hc /mnt/outer
+```
+Place decoy files inside.
+
+## 4.4 Mount Hidden Volume
+
+```bash
+veracrypt veracrypt_volume.hc /mnt/hidden
+```
+
+Place real sensitive data here.
+
+# 5. Summary
+
+| Operation                  | Status |
+| -------------------------- | ------ |
+| LUKS volume created        | ✔️     |
+| LUKS encryption validated  | ✔️     |
+| Mounted/unmounted test     | ✔️     |
+| Access restricted to admin | ✔️     |
+| VeraCrypt installed        | ✔️     |
+| Standard volume created    | ✔️     |
+| Hidden volume created      | ✔️     |
+| Sensitive data stored      | ✔️     |
+
