@@ -268,20 +268,20 @@ sudo mkdir -p /opt/projects
 mkdir -p /opt/projects
 
 # Full rights for admin group
-setfacl -m g:admin_role:rwx /opt/projects
+setfacl -m g:admin:rwx /opt/projects
 
 # Dev: read + write
-setfacl -m g:dev_role:rw /opt/projects
+setfacl -m g:dev:rw /opt/projects
 
 # Intern: read-only
 # Needs +x on directory to traverse (required to read files)
-setfacl -m g:intern_role:r-- /opt/projects
-setfacl -m g:intern_role:rx /opt/projects
+setfacl -m g:intern:r-- /opt/projects
+setfacl -m g:intern:rx /opt/projects
 
 # Inheritance for newly created files
-setfacl -d -m g:admin_role:rwx /opt/projects
-setfacl -d -m g:dev_role:rw  /opt/projects
-setfacl -d -m g:intern_role:r  /opt/projects
+setfacl -d -m g:admin:rwx /opt/projects
+setfacl -d -m g:dev:rw  /opt/projects
+setfacl -d -m g:intern:r  /opt/projects
 ```
 
 ## Verification
@@ -299,9 +299,9 @@ We see :
 ```bash
 user::rwx
 group::rwx
-group:admin_role:rwx
-group:dev_role:rw-
-group:intern_role:r-x
+group:admin:rwx
+group:dev:rw-
+group:intern:r-x
 mask::rwx
 other::---
 ```
@@ -584,9 +584,9 @@ This configuration aligns with:
 
 ---
 
-# 🛡️ 1. UFW Configuration
+# 1. UFW Configuration
 
-## 🔧 Installation
+## Installation
 
 ```bash
 sudo apt install -y ufw
