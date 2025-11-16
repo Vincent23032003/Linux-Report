@@ -28,6 +28,8 @@ ufw status verbose
 
 #Fail2ban
 
+
+
 touch /etc/fail2ban/jail.d/sshd.local
 
 
@@ -38,7 +40,14 @@ echo "maxretry = 3" >> /etc/fail2ban/jail.d/sshd.local
 echo "bantime = 10m" >> /etc/fail2ban/jail.d/sshd.local
 echo "logpath = /var/log/fail2ban.log" >> /etc/fail2ban/jail.d/sshd.local
 
-systemctl restart fail2ban
+
+
 systemctl enable fail2ban
+
+systemctl start fail2ban
+
+sleep 120
+
+systemctl status fail2ban
 
 fail2ban-client status sshd
