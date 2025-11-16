@@ -202,12 +202,12 @@ This enforces:
 
 ![adminRight](images/adminRight.png)
 
-### Test 2 — Dev user (jules.fedit)
+### Test 2 — Dev user (Jules_fedit)
 
 ![dev1Rights](images/dev1Rights.png)
 ![dev2Rights](images/dev2Rights.png)
 
-### Test 3 — Intern user (ignacio.botella)
+### Test 3 — Intern user (Ignacio_botella)
 
 ![internRights](images/internRights.png)
 
@@ -215,9 +215,9 @@ This enforces:
 
 | User            | Group       | Sudo Rights         | Lockout Policy |
 | --------------- | ----------- | ------------------- | -------------- |
-| vincent.bare    | admin_role  | Full sudo           | Yes            |
-| jules.fedit     | dev_role    | mount + restart ssh | Yes            |
-| ignacio.botella | intern_role | No sudo             | Yes            |
+| Vincent_bare    | admin       | Full sudo           | Yes            |
+| Jules_fedit     | dev         | mount + restart ssh | Yes            |
+| Ignacio_botella | intern      | No sudo             | Yes            |
 
 
 
@@ -225,7 +225,7 @@ This enforces:
 
 # 6.2 Fine-Grained Access
 
-## ✔️ Objectives
+## Objectives
 - Create directory `/opt/projects`
 - Apply access control:
   - admin → **rwx**
@@ -257,7 +257,7 @@ sudo mkdir -p /opt/projects
 ```
 
 
-## 🔐 ACL Configuration
+## ACL Configuration
 
 
 ### Script: `/scripts/01_users.sh`
@@ -339,35 +339,35 @@ Output:
 
 ![umask027](images/umask027.png)
 
-screen umask 0027
-
-
-
 
 ## Access Tests
 
 We switched to each user to test expected behavior.
 
-### 1. Admin (vincent.bare – admin_role)
+### 1. Admin (Vincent_bare – admin)
 
 Then create a file and write into it. 
+
 ![admin Acl Access](images/adminAclAccess.png)
 
 Finally, we try to read the content of the file.
+
 ![admin Acl Access](images/adminAclAccess2.png)
 
-### 2. Developer (jules.fedit – dev_role)
+### 2. Developer (Jules_fedit – dev)
 
 We connect to the dev_role account which is Jules_fedit.
+
 ![dev Acl Access](images/devAclAccess.png)
 
 We can’t acces to /opt/projects which is normal because we don”t have the execution permission.
 Nevertheless, we can write and read a file.
+
 ![dev Acl Access](images/devAclAccess.png)
 
 
 
-### 3. Intern (ignacio.botella – intern_role)
+### 3. Intern (Ignacio_botella – intern)
 
 ![intern Acl Access](images/internAclAccess.png)
 
@@ -403,7 +403,7 @@ Verified behavior for all users
 
 # 6.3 SSH Hardening & Authentication Security
 
-## ✔️ Objectives
+## Objectives
 - Install and activate SSH
 - Disable password authentication (keys only)
 - Disable root login
@@ -723,3 +723,31 @@ sudo fail2ban-client status sshd
 
 
 
+# 6.5 Data Encryption & Protection
+
+## 🎯 Objectives
+- Create a 10–20 MB encrypted partition using **LUKS**
+- Use `cryptsetup` to format & unlock the encrypted device
+- Mount it at `/mnt/secure`
+- Restrict access so only **admins** can see the content
+- Demonstrate:
+  - Mounted → data accessible  
+  - Unmounted → data unreadable  
+- Install and use **VeraCrypt**
+- Create a **hidden volume** and store sensitive data in it
+
+This follows:
+- CIS Ubuntu Benchmark (Disk Encryption)
+- ANSSI recommendations on data-at-rest protection
+
+---
+
+# 1. LUKS Encrypted Volume
+
+## 1.1 Create a 20MB test partition
+
+We simulate a storage device using a loopback file:
+
+```bash
+sudo dd if=/dev/zero of=/secure.img bs=1M count=20
+sudo losetup /dev/loop10 secure.img
