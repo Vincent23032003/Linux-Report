@@ -753,12 +753,15 @@ We simulate a storage device using a loopback file:
 sudo dd if=/dev/zero of=/secure.img bs=1M count=20
 sudo losetup /dev/loop10 secure.img
 ```
+<img width="1288" height="254" alt="image" src="https://github.com/user-attachments/assets/dc559fe1-a9c9-43a4-b348-07bddc189563" />
+
 
 Check:
 
 ```bash
 losetup -a
 ```
+<img width="856" height="294" alt="image" src="https://github.com/user-attachments/assets/de160e42-517d-4cb5-b3f0-d24485a34848" />
 
 ## 1.2 Encrypt the volume with LUKS
 
