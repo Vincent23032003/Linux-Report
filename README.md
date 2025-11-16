@@ -1031,3 +1031,25 @@ These outputs confirm that:
 | ausearch + aureport logs collected | ✔️     |
 
 Our audit subsystem now ensures full traceability of sensitive file modifications and privileged actions, complying with CIS and ANSSI monitoring guidelines.
+
+
+
+
+
+
+
+
+
+
+
+
+# Conclusion :
+
+At the end of this practical work, all the fundamental security mechanisms for a Linux system had been implemented and successfully tested.
+
+First, user, group and privilege management enabled us to establish a clear role structure (admin, dev, intern) and limit access according to the principle of least privilege. Password policies, automatic locking after failed authentication attempts and sudo rights reinforced system access security.
+
+Next, fine-tuning directory permissions and applying the umask recommended by the CIS Benchmark ensured adequate protection for user-created data.
+
+The addition of the UFW firewall and the Fail2Ban tool provided effective network and intrusion protection, automatically blocking suspicious connections while maintaining accessibility to essential services.
+
