@@ -51,8 +51,8 @@ cat ~/.ssh/vincent_id25519.pub >> ~/.ssh/authorized_keys
 cat ~/.ssh/jules_id25519.pub >> ~/.ssh/authorized_keys
 cat ~/.ssh/ignacio_id25519.pub >> ~/.ssh/authorized_keys
 
-chmod 600 ~/root/.ssh/authorized_keys
-chmod 700 ~/root/.ssh
+chmod 600 ~/.ssh/authorized_keys
+chmod 700 ~/.ssh
 
 #Harden Cyphers and cryptographics algorithms 
 
