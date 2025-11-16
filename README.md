@@ -751,7 +751,7 @@ We simulate a storage device using a loopback file:
 
 ```bash
 sudo dd if=/dev/zero of=/secure.img bs=1M count=20
-sudo losetup /dev/loop10 secure.img
+sudo losetup /dev/loop10 /secure.img
 ```
 <img width="1288" height="254" alt="image" src="https://github.com/user-attachments/assets/dc559fe1-a9c9-43a4-b348-07bddc189563" />
 
@@ -769,6 +769,7 @@ losetup -a
 sudo cryptsetup luksFormat /dev/loop10
 ```
 Confirm with YES and set a passphrase.
+<img width="1120" height="500" alt="image" src="https://github.com/user-attachments/assets/bebcc95a-05a6-4211-a61d-72dd9bd07df0" />
 
 
 ## 1.3 Open (unlock) the encrypted container
@@ -777,16 +778,14 @@ Confirm with YES and set a passphrase.
 ```bash
 sudo cryptsetup open /dev/loop10 secure_volume
 ```
-
-```bash
-/dev/mapper/secure_volume
-```
+<img width="1096" height="160" alt="image" src="https://github.com/user-attachments/assets/a99ef377-896b-4269-b65a-1fbc38ff5420" />
 
 ## 1.4 Create a filesystem
 
 ```bash
 sudo mkfs.ext4 /dev/mapper/secure_volume
 ```
+<img width="1384" height="438" alt="image" src="https://github.com/user-attachments/assets/3f117485-048b-433f-ba03-1463ab5e9d75" />
 
 ## 1.5 Mount the encrypted volume
 
@@ -794,6 +793,7 @@ sudo mkfs.ext4 /dev/mapper/secure_volume
 sudo mkdir -p /mnt/secure
 sudo mount /dev/mapper/secure_volume /mnt/secure
 ```
+<img width="1166" height="268" alt="image" src="https://github.com/user-attachments/assets/e352cc6c-52ae-4146-849c-c0b1f71c9934" />
 
 # 2. Permissions & Access Control
 
@@ -801,6 +801,8 @@ sudo mount /dev/mapper/secure_volume /mnt/secure
 sudo chown root:admin_role /mnt/secure
 sudo chmod 770 /mnt/secure
 ```
+<img width="820" height="282" alt="image" src="https://github.com/user-attachments/assets/8088348f-8f3b-44a8-a4d9-4ebfb0dbf44b" />
+
 Meaning:
 
 - Only root + admin_role have access
@@ -818,10 +820,10 @@ Result: file is readable.
 ## 3.1 Mounted → data accessible
 
 ```bash
-sudo touch /mnt/secure/secret.txt
 sudo echo "TOP SECRET" > /mnt/secure/secret.txt
 cat /mnt/secure/secret.txt
 ```
+<img width="1106" height="294" alt="image" src="https://github.com/user-attachments/assets/b7884a32-8670-42a7-b90a-32dbe03d7c22" />
 
 ## 3.2 Unmount and lock the volume
 
@@ -836,6 +838,7 @@ Trying to access the file:
 ```bash
 sudo cat /mnt/secure/secret.txt
 ```
+<img width="1198" height="446" alt="image" src="https://github.com/user-attachments/assets/ab2270ca-7f27-4335-ab69-9f26749fc5ed" />
 
 Result:
 
@@ -850,17 +853,12 @@ Without unlocking (cryptsetup open), the data is unreadable.
 We installed VeraCrypt:
 
 ```bash
-sudo apt install -y veracrypt
+sudo apt install veracrypt -y
 ```
-
+<img width="1167" height="184" alt="image" src="https://github.com/user-attachments/assets/2a431505-184b-4de9-a83f-f8f7d9ba4de4" />
 
 ## 4.1 Create a VeraCrypt encrypted container
 
-Using the GUI or CLI:
-
-```bash
-veracrypt --text --create veracrypt_volume.hc
-```
 Steps
 
 - Choose standard volume
@@ -868,26 +866,31 @@ Steps
 - 10–20MB size
 - Set outer volume password
 
-## 4.2 Create a hidden volume inside it
+Using the GUI or CLI:
+<img width="1073" height="860" alt="image" src="https://github.com/user-attachments/assets/f514edf1-1b75-4f8c-a15d-561980235d79" />
 
-This protects against coercion:
-The outer volume opens normally.
-The hidden one is invisible unless the correct password is provided.
+<img width="1214" height="814" alt="image" src="https://github.com/user-attachments/assets/473e528b-7cb1-41ee-9e10-c0f5fdfeb591" />
 
-## 4.3 Mount Outer Volume
+<img width="1205" height="793" alt="image" src="https://github.com/user-attachments/assets/d701d2b5-3bea-4088-a51b-addf8c1aea1a" />
 
-```bash
-veracrypt veracrypt_volume.hc /mnt/outer
-```
-Place decoy files inside.
+<img width="1214" height="822" alt="image" src="https://github.com/user-attachments/assets/4b1b5497-d8bd-4d34-b558-b5cd6f373a0c" />
 
-## 4.4 Mount Hidden Volume
+<img width="1203" height="811" alt="image" src="https://github.com/user-attachments/assets/29d3361a-d9e3-49ba-ab65-5ee0dddbd973" />
 
-```bash
-veracrypt veracrypt_volume.hc /mnt/hidden
-```
+We need to move the mouse to generate entropy.
 
-Place real sensitive data here.
+<img width="1209" height="797" alt="image" src="https://github.com/user-attachments/assets/eadd9a18-105a-4a28-b18c-d5f43a50dfc8" />
+
+We are required to enter our password.
+
+<img width="1216" height="798" alt="image" src="https://github.com/user-attachments/assets/b41ccf91-0202-4759-8299-5d5c3c20804d" />
+
+<img width="1210" height="809" alt="image" src="https://github.com/user-attachments/assets/f8436152-3cce-4ab7-8911-6aebead52c73" />
+
+As we could see, the volume has been scanned and the maximum volume has been successfully created.
+
+<img width="1216" height="618" alt="image" src="https://github.com/user-attachments/assets/c0204361-2ba9-4b90-83b3-02dfd7331f1f" />
+
 
 # 5. Summary
 
