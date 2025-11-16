@@ -1011,10 +1011,19 @@ sudo passwd Vincent_bare
 We used aureport to generate summary tables:
 
 ```bash
-sudo aureport -k
-sudo aureport -x
-sudo aureport -f
+sudo ausearch -k passwd_changes
+sudo ausearch -k shadow_changes
+sudo ausearch -k privileged_sudo
+sudo ausearch -k root_dir_monitoring
 ```
+<img width="1495" height="463" alt="image" src="https://github.com/user-attachments/assets/0f9ca2b3-2ee9-4344-8077-af5f25405f9d" />
+
+<img width="1503" height="357" alt="image" src="https://github.com/user-attachments/assets/61c7cd58-3138-405a-8e31-9a797bebcffd" />
+
+<img width="1495" height="472" alt="image" src="https://github.com/user-attachments/assets/72cfc0b9-8bcc-4b4a-b7f3-71d53f4212eb" />
+
+<img width="896" height="723" alt="image" src="https://github.com/user-attachments/assets/0d94de3d-1cf0-4fe0-b8f9-6a8ec6601f24" />
+
 
 These outputs confirm that:
 - executions are logged
