@@ -42,7 +42,9 @@ ssh-keygen -t ed25519 -f ~/.ssh/vincent_id25519 -C "Vincent_bare@ece" -N ""
 ssh-keygen -t ed25519 -f ~/.ssh/jules_id25519 -C "Jules_fedit@ece" -N ""
 ssh-keygen -t ed25519 -f ~/.ssh/ignacio_id25519 -C "Ignacio_botella@ece" -N ""
 
-ssh-copy-id -i ~/.ssh/vincent_id25519 
+#The part of copying the pub keys should be done with the command ssh-copy-id 
+#But we are installing this in our localhost so it's no necessary but not the best practice
+
 
 
 cat ~/.ssh/vincent_id25519.pub >> ~/.ssh/authorized_keys
